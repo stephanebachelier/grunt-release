@@ -133,6 +133,58 @@ The following are all the release steps, you can disable any you need to:
   }
 ```
 
+### How to run a task between bump and publish.
+
+The idea here is simply to complete the process of a deployment, which is:
+ * bump
+ * do something
+ * publish
+
+```
+  grunt.initConfig({
+    // some configuration here ....
+
+    // then the release configuration
+    release: {
+      bump: {
+        options: {
+          bump: true,
+          add: false,
+          commit: false,
+          tag: false,
+          push: false,
+          pushTags: false,
+          npm : false
+        }
+      },
+      publish: {
+        options: {
+          bump: false,
+          commitMessage: 'bump version <%= version %>',
+          github: {
+            // your conf
+          }
+        }
+      }
+    }
+  });
+
+  // register a task which enable the following process:
+  //  * bump package.json (or any other json file)
+  //  * do something like create a dist version
+  //  * tag, push, publish
+  //
+  // run this task with --type option
+  // $ grunt dist --type minor
+  //
+  grunt.registerTask('deploy', function () {
+    var version = grunt.option('type') || 'patch'; // default to patch
+    grunt.task.run('release:bump:' + version);
+    grunt.task.run(/* your task(s) */);
+    grunt.task.run('release:publish');
+  });
+```
+
 ### Notes on Github Releases:
 1. Yes, you have to use environment variables. I would be a terrible person if I let you check in your username and password into your source code.
 2. The [Github Releases API](http://developer.github.com/v3/repos/releases/) is still unstable and may change in the next couple months or so.

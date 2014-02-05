@@ -10,8 +10,7 @@ var shell = require('shelljs');
 var semver = require('semver');
 
 module.exports = function(grunt){
-  grunt.registerTask('release', 'bump version, git tag, git push, npm publish', function(type){
-    
+  grunt.registerMultiTask('release', 'bump version, git tag, git push, npm publish', function(type){
     //defaults
     var options = this.options({
       bump: true,
